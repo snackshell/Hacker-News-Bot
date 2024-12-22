@@ -57,6 +57,3 @@ hacker-news-bot/
 ├── README.md             # Documentation
 ├── .gitignore            # Files to ignore in GitHub
 ```
-Contributing
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
