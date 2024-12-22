@@ -58,6 +58,16 @@ async def top_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message_thread_id=update.message.message_thread_id
         )
 
+async def send_to_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = int(os.getenv('TELEGRAM_CHAT_ID'))  # Load the group ID from .env
+    topic_id = int(os.getenv('TELEGRAM_TOPIC_ID'))  # Load the topic ID from .env
+
+    await context.bot.send_message(
+      text="Hello! This message is sent to the topic!",
+        message_thread_id=topic_id
+    )
+       chat_id=chat_id,
+   
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"Error occurred: {context.error}")
     if update and update.message:
