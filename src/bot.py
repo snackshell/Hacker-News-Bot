@@ -14,19 +14,19 @@ load_dotenv()
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_message = (
-        "Welcome to HN Daily Bot! 📰\n\n"
-        "I will send you the top Hacker News stories every day at 8:00 AM EAT.\n\n"
+        "Yo, this is HN bot for @dagmawibabichat 📰\n\n"
+        "I will send ya the top Hacker News stories every day at 8:00 AM EAT.\n\n"
         "Commands:\n"
         "/getnews - Get top stories now\n"
-        "/help - Show this help message"
+        "/help - Show help message"
     )
     await update.message.reply_text(welcome_message)
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🤖 Hacker News Bot Commands:\n\n"
-        "- /getnews: Show the latest top 10 Hacker News stories\n"
-        "- /help: Display this help message\n\n"
+        "/getnews: Show the latest top 10 Hacker News\n"
+        "/help: Display this help message\n\n"
         "This bot fetches top tech news from Hacker News daily at 8:00 AM EAT."
     )
     await update.message.reply_text(help_text, parse_mode=ParseMode.HTML)
@@ -58,7 +58,7 @@ def main():
     # Add command handlers
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('help', help_command))
-    app.add_handler(CommandHandler('getnews', top_command))  # Changed from /top to /getnews
+    app.add_handler(CommandHandler('getnews', top_command))  
     
     # Schedule daily updates
     schedule_daily_updates(app, chat_id)
