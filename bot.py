@@ -1,93 +1,71 @@
-import logging
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Application, CommandHandler
-import requests
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.constants import ParseMode
 from datetime import datetime
-from dateutil import tz
+import pytz
+import os
+from dotenv import load_dotenv
 
-# Replace with your Bot Token
-BOT_TOKEN = "YOUR_BOT_API_TOKEN"
+from hn_service import fetch_top_stories
+from message_formatter import format_story_message
+from scheduler import schedule_daily_updates
 
-# Hacker News API endpoints
-HN_TOP_STORIES_URL = "https://hacker-news.firebaseio.com/v0/topstories.json"
-HN_ITEM_URL = "https://hacker-news.firebaseio.com/v0/item/{}.json"
+load_dotenv()
 
-# Configure logging
-logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    welcome_message = (
+        "Welcome to HN Daily Bot! 📰\n\n"
+        "I will send you the top Hacker News stories every day at 8:00 AM EAT.\n\n"
+        "Commands:\n"
+        "/getnews - Get top stories now\n"
+        "/help - Show this help message"
+    )
+    await update.message.reply_text(welcome_message)
 
-# Function to fetch and send Hacker News
-async def send_hn_news(update: Update, context):
-    chat_id = update.effective_chat.id
-    top_stories = requests.get(HN_TOP_STORIES_URL).json()[:5]  # Get top 5 stories
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    help_text = (
+        "🤖 Hacker News Bot Commands:\n\n"
+        "- /getnews: Show the latest top 10 Hacker News stories\n"
+        "- /help: Display this help message\n\n"
+        "This bot fetches top tech news from Hacker News daily at 8:00 AM EAT."
+    )
+    await update.message.reply_text(help_text, parse_mode=ParseMode.HTML)
 
-    for story_id in top_stories:
-        story = requests.get(HN_ITEM_URL.format(story_id)).json()
-        title = story.get("title", "No Title")
-        url = story.get("url", "No URL")
-        comments_url = f"https://news.ycombinator.com/item?id={story_id}"  # Comments link
-
-        # Create inline buttons
-        keyboard = [
-            [
-                InlineKeyboardButton("🔗 Details", url=url),
-                InlineKeyboardButton("💬 Comments", url=comments_url),
-            ]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        # Send the message with buttons
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=f"📰 **{title}**",
-            parse_mode="Markdown",
-            reply_markup=reply_markup,
+async def top_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        stories = await fetch_top_stories()
+        current_date = datetime.now(pytz.timezone('Africa/Addis_Ababa')).strftime('%B %d, %Y')
+        message, reply_markup = format_story_message(stories, current_date)  # Unpack the tuple
+        
+        await update.message.reply_text(
+            message,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
+            reply_markup=reply_markup
+        )
+    except Exception as e:
+        print(f"Error handling /getnews command: {e}")
+        await update.message.reply_text(
+            "⚠️ Failed to fetch top stories. Please try again later."
         )
 
-# Function to send daily news at a specific time
-async def daily_task(application):
-    eth_timezone = tz.gettz("Africa/Addis_Ababa")  # Ethiopian timezone
-    current_time = datetime.now(eth_timezone).time()
-
-    if current_time.hour == 8:  # 8 AM Ethiopian time
-        chat_id = "YOUR_GROUP_CHAT_ID"  # Replace with your group chat ID
-        top_stories = requests.get(HN_TOP_STORIES_URL).json()[:5]
-        for story_id in top_stories:
-            story = requests.get(HN_ITEM_URL.format(story_id)).json()
-            title = story.get("title", "No Title")
-            url = story.get("url", "No URL")
-            comments_url = f"https://news.ycombinator.com/item?id={story_id}"  # Comments link
-
-            # Create inline buttons
-            keyboard = [
-                [
-                    InlineKeyboardButton("🔗 Details", url=url),
-                    InlineKeyboardButton("💬 Comments", url=comments_url),
-                ]
-            ]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-
-            # Send the message with buttons
-            await application.bot.send_message(
-                chat_id=chat_id,
-                text=f"📰 **{title}**",
-                parse_mode="Markdown",
-                reply_markup=reply_markup,
-            )
-
-# Main function
 def main():
-    # Create the bot application
-    application = Application.builder().token(BOT_TOKEN).build()
-
+    token = os.getenv('TELEGRAM_BOT_TOKEN')
+    chat_id = os.getenv('TELEGRAM_CHAT_ID')
+    
+    app = Application.builder().token(token).build()
+    
     # Add command handlers
-    application.add_handler(CommandHandler("getnews", send_hn_news))
-
-    # Schedule daily task
-    application.job_queue.run_repeating(daily_task, interval=3600, first=0)  # Check every hour
-
+    app.add_handler(CommandHandler('start', start_command))
+    app.add_handler(CommandHandler('help', help_command))
+    app.add_handler(CommandHandler('getnews', top_command))  # Changed from /top to /getnews
+    
+    # Schedule daily updates
+    schedule_daily_updates(app, chat_id)
+    
     # Start the bot
-    application.run_polling()
+    print("Bot is running...")
+    app.run_polling()
 
-# Run the bot
 if __name__ == "__main__":
     main()
