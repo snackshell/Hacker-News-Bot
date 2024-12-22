@@ -1,59 +1,66 @@
 # Hacker News Bot For Dagmawi Babi Telegram Chat Group.
 
-This is a Telegram bot that sends daily Hacker News updates with inline buttons for "Details" and "Comments." The bot fetches the top stories from Hacker News and posts them every morning at 8 AM (Ethiopian Time) in a specified Telegram group.
+A Python-based Telegram bot that delivers daily updates of top Hacker News stories to your group chat.
 
 ## Features
-- Sends the top 5 Hacker News stories daily at 8 AM Ethiopian time.
-- Includes inline buttons for:
-  - **🔗 Details**: Direct link to the article.
-  - **💬 Comments**: Link to the Hacker News discussion thread.
-- Supports manual fetching with the `/getnews` command.
+
+- Daily updates at 8:00 AM EAT (UTC+3)
+- Top 10 highest-ranked Hacker News stories
+- Interactive commands (`/getnews`, `/help`)
+- Error handling with retry mechanism
+- Clean message formatting with HTML support
+
+## Requirements
+
+- Python 3.7+
+- Telegram Bot Token
+- Telegram Group Chat ID
 
 ## Installation
 
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/your-username/hacker-news-bot.git
-   cd hacker-news-bot
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/hn-telegram-bot.git
+cd hn-telegram-bot
+```
 
-2. Install Dependencies: Ensure you have Python 3.8+ installed. Then run:
-
+2. Install dependencies:
+```bash
 pip install -r requirements.txt
+```
 
+3. Create a `.env` file in the project root:
+```
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHAT_ID=your_chat_id_here
+```
 
-3. Set Up the Bot:
+## Usage
 
-Create a Telegram bot using BotFather and get the API token.
+Run the bot:
+```bash
+python src/bot.py
+```
 
-Replace YOUR_BOT_API_TOKEN in bot.py with your bot token.
+### Available Commands
 
-Add your Telegram group chat ID in bot.py.
+- `/start` - Welcome message and bot introduction
+- `/getnews` - Get current top 10 Hacker News stories
+- `/help` - Display help message and available commands
 
-
-
-4. Run the Bot:
-
-python bot.py
-
-
-5. (Optional) Deploy on a Server: Use platforms like Heroku, AWS, or VPS to keep the bot running 24/7.
-
-
-
-Usage
-
-Command: /getnews
-
-Manually fetches and sends the top 5 Hacker News stories.
-
-
-
-File Structure
+## Project Structure
 
 ```
-hacker-news-bot/
-├── bot.py                # Main bot script
-├── requirements.txt      # Dependencies
-├── README.md             # Documentation
-├── .gitignore            # Files to ignore in GitHub
+├── src/
+│   ├── bot.py           # Main bot setup and command handlers
+│   ├── hn_service.py    # Hacker News API integration
+│   ├── message_formatter.py  # Message formatting utilities
+│   └── scheduler.py     # Daily update scheduling
+├── .env                 # Environment variables
+├── requirements.txt     # Python dependencies
+└── README.md           # Project documentation
 ```
+
+## License
+
+MIT
