@@ -63,11 +63,11 @@ async def send_to_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     topic_id = int(os.getenv('TELEGRAM_TOPIC_ID'))  # Load the topic ID from .env
 
     await context.bot.send_message(
-      text="Hello! This message is sent to the topic!",
+        chat_id=chat_id,
+        text="Hello! This message is sent to the topic!",
         message_thread_id=topic_id
     )
-       chat_id=chat_id,
-   
+
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"Error occurred: {context.error}")
     if update and update.message:
