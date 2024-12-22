@@ -1,3 +1,7 @@
-python-telegram-bot==20.3
+python-telegram-bot==20.6
 requests==2.31.0
-python-dateutil==2.8.2
+python-dotenv==1.0.0
+schedule==1.2.1
+pytz==2023.3.post1
+aiohttp==3.9.1
+asyncio==3.4.3
