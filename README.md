@@ -20,7 +20,7 @@ A Python-based Telegram bot that delivers daily updates of top Hacker News stori
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/hn-telegram-bot.git
+git clone https://github.com/snackshell/Hacker-News-Bot.git
 cd hn-telegram-bot
 ```
 
