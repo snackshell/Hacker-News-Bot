@@ -50,16 +50,13 @@ Manually fetches and sends the top 5 Hacker News stories.
 
 File Structure
 
+```
 hacker-news-bot/
 ├── bot.py                # Main bot script
 ├── requirements.txt      # Dependencies
 ├── README.md             # Documentation
 ├── .gitignore            # Files to ignore in GitHub
-
+```
 Contributing
 
 Contributions are welcome! Feel free to open an issue or submit a pull request.
-
-License
-
-This project is licensed under the MIT License.
