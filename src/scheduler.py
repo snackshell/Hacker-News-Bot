@@ -32,7 +32,7 @@ def schedule_daily_updates(app, chat_id: str):
         asyncio.run(send_daily_update(app, chat_id))
     
     # Schedule for 8:00 AM EAT
-    schedule.every().day.at("14:27").do(run_daily_update)
+    schedule.every().day.at("10:00").do(run_daily_update)
     
     def run_scheduler():
         while True:
