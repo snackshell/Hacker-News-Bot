@@ -1,4 +1,4 @@
-# Hacker News Bot For Dagmawi Babi Telegram Chat Group.
+# Hacker News Bot For Telegram Channel and Chat Group.
 
 A Python-based Telegram bot that delivers daily updates of top Hacker News stories to your group chat.
 
@@ -21,7 +21,7 @@ A Python-based Telegram bot that delivers daily updates of top Hacker News stori
 1. Clone the repository:
 ```bash
 git clone https://github.com/snackshell/Hacker-News-Bot.git
-cd hn-telegram-bot
+cd Hacker-News-Bot
 ```
 
 2. Install dependencies:
