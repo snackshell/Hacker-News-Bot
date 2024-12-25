@@ -1,9 +1,9 @@
+import os 
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from telegram.constants import ParseMode
 from datetime import datetime
 import pytz
-import os
 from dotenv import load_dotenv
 
 from hn_service import fetch_top_stories
@@ -35,14 +35,16 @@ async def top_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         stories = await fetch_top_stories()
         current_date = datetime.now(pytz.timezone('Africa/Addis_Ababa')).strftime('%B %d, %Y')
-        message, reply_markup = format_story_message(stories, current_date)  # Unpack the tuple
+        message, reply_markup = format_story_message(stories, current_date)
         
+        # Send to the originating chat
         await update.message.reply_text(
             message,
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=True,
             reply_markup=reply_markup
         )
+        
     except Exception as e:
         print(f"Error handling /getnews command: {e}")
         await update.message.reply_text(
@@ -60,11 +62,11 @@ def main():
     app.add_handler(CommandHandler('help', help_command))
     app.add_handler(CommandHandler('getnews', top_command))  
     
+    
     # Schedule daily updates
-    schedule_daily_updates(app, chat_id)
+    schedule_daily_updates(app)
     
     # Start the bot
-    print("Bot is running...")
     app.run_polling()
 
 if __name__ == "__main__":
